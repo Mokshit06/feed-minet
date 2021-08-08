@@ -96,6 +96,8 @@ model ChatRoom {
   id          String    @id @default(uuid())
   particpants User[]
   messages    Message[]
+
+  @@map("chat_rooms")
 }
 
 model Message {
@@ -105,4 +107,6 @@ model Message {
   sender User     @relation(fields: [userId], references: [id])
   text   String
   userId String   @map("user_id")
+
+  @@map("messages")
 }

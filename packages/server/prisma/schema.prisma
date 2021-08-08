@@ -1,0 +1,108 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Provider {
+  GOOGLE
+  DISCORD
+
+  @@map("provider")
+}
+
+enum UserRole {
+  TEACHER
+  STUDENT
+
+  @@map("user_role")
+}
+
+model User {
+  id             String     @id @default(uuid())
+  socialId       String     @unique @map("social_id")
+  name           String
+  email          String?    @unique
+  image          String?
+  admin          Boolean    @default(false)
+  provider       Provider
+  role           UserRole
+  coursesMade    Course[]   @relation("CoursesMade")
+  coursesWatched Course[]   @relation("CoursesWatched")
+  comments       Comment[]
+  // VideoCallParticipant VideoCallParticipant[]
+  chatRooms      ChatRoom[]
+  messagesSent   Message[]
+
+  @@map("users")
+}
+
+// model VideoCallParticipant {
+//   id          String     @id @default(uuid())
+//   user        User       @relation(fields: [userId], references: [id])
+//   isHost      Boolean    @default(false) @map("is_host")
+//   userId      String
+//   videoCall   VideoCall? @relation(fields: [videoCallId], references: [id])
+//   videoCallId String?    @map("video_call_id")
+
+//   @@map("video_call_participants")
+// }
+
+// model VideoCall {
+//   id          String                 @id @default(uuid())
+//   particpants VideoCallParticipant[]
+
+//   @@map("video_calls")
+// }
+
+model Course {
+  id        String  @id @default(uuid())
+  videos    Video[]
+  teacher   User    @relation("CoursesMade", fields: [teacherId], references: [id])
+  teacherId String
+  watchedBy User[]  @relation("CoursesWatched")
+
+  @@map("courses")
+}
+
+model Video {
+  id       String    @id @default(uuid())
+  url      String
+  course   Course?   @relation(fields: [courseId], references: [id])
+  courseId String?   @map("course_id")
+  comments Comment[]
+
+  @@map("videos")
+}
+
+model Comment {
+  id      String @id @default(uuid())
+  video   Video  @relation(fields: [videoId], references: [id])
+  videoId String
+  text    String
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  @@map("comments")
+}
+
+model ChatRoom {
+  id          String    @id @default(uuid())
+  particpants User[]
+  messages    Message[]
+}
+
+model Message {
+  id     String   @id @default(uuid())
+  room   ChatRoom @relation(fields: [roomId], references: [id])
+  roomId String
+  sender User     @relation(fields: [userId], references: [id])
+  text   String
+  userId String
+}

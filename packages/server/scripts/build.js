@@ -1,18 +1,18 @@
 // @ts-check
 const esbuild = require('esbuild');
 const pkg = require('../package.json');
-const dotenv = require('dotenv-flow');
+// const dotenv = require('dotenv-flow');
 
-dotenv.config();
+// dotenv.config();
 
-/** @type {Record<string, string>} */
-const define = {};
+// /** @type {Record<string, string>} */
+// const define = {};
 
-for (const [name, value] of Object.entries(process.env)) {
-  if (name.includes('(') || name.includes(')')) continue;
+// for (const [name, value] of Object.entries(process.env)) {
+//   if (name.includes('(') || name.includes(')')) continue;
 
-  define[`process.env.${name}`] = JSON.stringify(value);
-}
+//   define[`process.env.${name}`] = JSON.stringify(value);
+// }
 
 esbuild
   .build({
@@ -26,6 +26,6 @@ esbuild
     outdir: 'build',
     watch: true,
     minify: true,
-    define,
+    // define,
   })
   .catch(() => process.exit(1));

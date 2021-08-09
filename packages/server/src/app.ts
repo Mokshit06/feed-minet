@@ -1,7 +1,7 @@
+import 'dotenv-flow/config';
 import { Provider, User, UserRole } from '@prisma/client';
 import pgSession from 'connect-pg-simple';
 import cors from 'cors';
-import 'dotenv-flow/config';
 import express, { NextFunction, Request, Response } from 'express';
 import expressSession from 'express-session';
 import passport from 'passport';

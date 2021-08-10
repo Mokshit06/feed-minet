@@ -21,7 +21,9 @@ export function useSocket() {
       secure: true,
     });
 
-    setSocket(newSocket);
+    window.socket = newSocket;
+
+    // setSocket(newSocket);
 
     return () => {
       newSocket.close();

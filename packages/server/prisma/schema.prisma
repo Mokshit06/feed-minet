@@ -101,12 +101,12 @@ model ChatRoom {
 }
 
 model Message {
-  id     String   @id @default(uuid())
-  room   ChatRoom @relation(fields: [roomId], references: [id])
-  roomId String   @map("room_id")
-  sender User     @relation(fields: [userId], references: [id])
-  text   String
-  userId String   @map("user_id")
+  id       String   @id @default(uuid())
+  room     ChatRoom @relation(fields: [roomId], references: [id])
+  roomId   String   @map("room_id")
+  sender   User     @relation(fields: [senderId], references: [id])
+  senderId String   @map("sender_id")
+  text     String
 
   @@map("messages")
 }

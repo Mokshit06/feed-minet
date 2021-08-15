@@ -18,106 +18,79 @@ enum Provider {
 }
 
 enum UserRole {
-  TEACHER
-  STUDENT
+  RESTAURANT
+  DONATOR
+  PICKUP
 
   @@map("user_role")
 }
 
 model User {
-  id             String     @id @default(uuid())
-  socialId       String     @unique @map("social_id")
-  name           String
-  email          String?    @unique
-  image          String?
-  admin          Boolean    @default(false)
-  provider       Provider
-  role           UserRole?
-  coursesMade    Course[]   @relation("CoursesMade")
-  coursesWatched Course[]   @relation("CoursesWatched")
-  comments       Comment[]
-  chatRooms      ChatRoom[]
-  messagesSent   Message[]
-  // VideoCallParticipant VideoCallParticipant[]
+  id            String      @id @default(uuid())
+  socialId      String      @unique @map("social_id")
+  name          String
+  email         String?     @unique
+  image         String?
+  admin         Boolean     @default(false)
+  provider      Provider
+  address       String?
+  role          UserRole?
+  restaurant    Restaurant?
+  donations     Donation[]
+  pickups       Pickup[]
+  credits       Int?
+  currentCoords Int[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 
   @@map("users")
 }
 
-// model VideoCallParticipant {
-//   id          String     @id @default(uuid())
-//   user        User       @relation(fields: [userId], references: [id])
-//   isHost      Boolean    @default(false) @map("is_host")
-//   userId      String
-//   videoCall   VideoCall? @relation(fields: [videoCallId], references: [id])
-//   videoCallId String?    @map("video_call_id")
-
-//   @@map("video_call_participants")
-// }
-
-// model VideoCall {
-//   id          String                 @id @default(uuid())
-//   particpants VideoCallParticipant[]
-
-//   @@map("video_calls")
-// }
-
-enum CourseStatus {
-  PUBLISHED
-  IDLE
-}
-
-model Course {
-  id        String       @id @default(uuid())
+model Restaurant {
+  id        String   @id @default(uuid())
   name      String
-  subject   String
-  status    CourseStatus @default(IDLE)
-  videos    Video[]
-  teacher   User         @relation("CoursesMade", fields: [teacherId], references: [id])
-  teacherId String       @map("teacher_id")
-  watchedBy User[]       @relation("CoursesWatched")
-
-  @@map("courses")
+  owner     User     @relation(fields: [ownerId], references: [id])
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Video {
-  id       String    @id @default(uuid())
-  url      String
-  course   Course?   @relation(fields: [courseId], references: [id])
-  courseId String?   @map("course_id")
-  comments Comment[]
-
-  @@map("videos")
+model Ngo {
+  id                String     @id @default(uuid())
+  name              String
+  numberOfPeople    Int
+  address           String?
+  coordinates       Int[]
+  donationsReceived Donation[]
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
 }
 
-model Comment {
-  id      String @id @default(uuid())
-  video   Video  @relation(fields: [videoId], references: [id])
-  videoId String @map("video_id")
-  text    String
-  user    User   @relation(fields: [userId], references: [id])
-  userId  String @map("user_id")
-
-  @@map("comments")
+model Donation {
+  id          String   @id @default(uuid())
+  description String
+  quantity    Int
+  donator     User     @relation(fields: [donatorId], references: [id])
+  donatorId   String
+  ngo         Ngo      @relation(fields: [ngoId], references: [id])
+  ngoId       String
+  // pickup      Pickup
+  // assignedTo   User     @relation("PickupToDonation", fields: [assignedToId], references: [id])
+  // assignedToId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  pickup      Pickup?
 }
 
-model ChatRoom {
-  id           String    @id @default(uuid())
-  name         String?
-  participants User[]
-  messages     Message[]
-
-  @@map("chat_rooms")
-}
-
-model Message {
-  id       String   @id @default(uuid())
-  room     ChatRoom @relation(fields: [roomId], references: [id])
-  roomId   String   @map("room_id")
-  sender   User     @relation(fields: [senderId], references: [id])
-  senderId String   @map("sender_id")
-  text     String
-
-  @@map("messages")
+model Pickup {
+  id            String    @id @default(uuid())
+  assignedTo    User      @relation(fields: [assignedToId], references: [id])
+  assignedToId  String
+  donation      Donation? @relation(fields: [donationId], references: [id])
+  donationId    String?
+  currentCoords Int[]
+  startedAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
 
 model Session {

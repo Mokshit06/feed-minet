@@ -34,7 +34,7 @@ export default function Layout({ children }: { children: ReactNode }) {
           <Link href="/">Home</Link>
           {user.isAuthenticated ? (
             <>
-              <Link href="/doubts">Doubts</Link>
+              <Link href="/dashboard">Dashboard</Link>
               <Button onClick={() => logout()}>Logout</Button>
             </>
           ) : (

@@ -13,6 +13,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "axios": "^0.21.1",
+    "formik": "^2.2.9",
     "framer-motion": "^4",
     "jotai": "^1.2.2",
     "next": "11.0.1",

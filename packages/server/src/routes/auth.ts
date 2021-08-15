@@ -1,11 +1,27 @@
 import { Router } from 'express';
 import passport from 'passport';
+import prisma from '../lib/prisma';
 import { ensureAuthenticated, ensureGuest } from '../middleware/auth';
 
 const router = Router();
 
 router.get('/me', ensureAuthenticated, (req, res) => {
   res.send(req.user);
+});
+
+router.put('/me', ensureAuthenticated, async (req, res) => {
+  if (!req.user) return;
+
+  await prisma.user.update({
+    where: {
+      id: req.user.id,
+    },
+    data: req.body,
+  });
+
+  res.json({
+    message: 'Details updated',
+  });
 });
 
 router.get('/success', (req, res) => {

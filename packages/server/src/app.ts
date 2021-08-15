@@ -1,5 +1,5 @@
 import 'dotenv-flow/config';
-import { Provider, User, UserRole } from '@prisma/client';
+import { Provider, User as PrismaUser, UserRole } from '@prisma/client';
 import pgSession from 'connect-pg-simple';
 import cors from 'cors';
 import express, { NextFunction, Request, Response } from 'express';
@@ -8,6 +8,12 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import prisma from './lib/prisma';
 import routes from './routes';
+
+declare global {
+  namespace Express {
+    interface User extends PrismaUser {}
+  }
+}
 
 const app = express();
 
@@ -50,7 +56,6 @@ passport.use(
             name: profile.displayName,
             socialId: profile.id,
             provider: Provider.GOOGLE,
-            role: UserRole.STUDENT,
             image: profile.photos[0].value,
           },
           update: {
@@ -68,10 +73,18 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => done(null, (user as User).id));
+passport.serializeUser((user, done) => done(null, (user as PrismaUser).id));
 passport.deserializeUser(async (id: string, done) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id } });
+    const user = await prisma.user.findUnique({
+      where: { id },
+      include: {
+        restaurant: true,
+        pickups: true,
+        donations: true,
+      },
+    });
+
     done(null, user);
   } catch (error) {
     done(error, null);

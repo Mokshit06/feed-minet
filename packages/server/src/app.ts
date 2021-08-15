@@ -9,12 +9,6 @@ import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import prisma from './lib/prisma';
 import routes from './routes';
 
-declare global {
-  namespace Express {
-    interface User extends PrismaUser {}
-  }
-}
-
 const app = express();
 
 app.use(express.json());

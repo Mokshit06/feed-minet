@@ -23,7 +23,7 @@ export const SocketProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (user.isAuthenticated) {
       const newSocket = io('http://localhost:5000', {
-        query: { id: '' },
+        query: { id: user.data!.id },
         secure: true,
       });
 

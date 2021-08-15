@@ -21,8 +21,15 @@ enum UserRole {
   RESTAURANT
   DONATOR
   PICKUP
+  NGO
 
   @@map("user_role")
+}
+
+enum PickupStatus {
+  IDLE
+  COMPLETED
+  ACTIVE
 }
 
 model User {
@@ -39,7 +46,8 @@ model User {
   donations     Donation[]
   pickups       Pickup[]
   credits       Int?
-  currentCoords Int[]
+  ngo           Ngo?
+  currentCoords Float[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
@@ -59,8 +67,10 @@ model Ngo {
   id                String     @id @default(uuid())
   name              String
   numberOfPeople    Int
+  owner             User?      @relation(fields: [ownerId], references: [id])
+  ownerId           String?
   address           String?
-  coordinates       Int[]
+  coordinates       Float[]
   donationsReceived Donation[]
   createdAt         DateTime   @default(now())
   updatedAt         DateTime   @updatedAt
@@ -74,23 +84,26 @@ model Donation {
   donatorId   String
   ngo         Ngo      @relation(fields: [ngoId], references: [id])
   ngoId       String
+  pickup      Pickup?
   // pickup      Pickup
   // assignedTo   User     @relation("PickupToDonation", fields: [assignedToId], references: [id])
   // assignedToId String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  pickup      Pickup?
 }
 
 model Pickup {
-  id            String    @id @default(uuid())
-  assignedTo    User      @relation(fields: [assignedToId], references: [id])
-  assignedToId  String
-  donation      Donation? @relation(fields: [donationId], references: [id])
-  donationId    String?
-  currentCoords Int[]
-  startedAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id              String       @id @default(uuid())
+  assignedTo      User         @relation(fields: [assignedToId], references: [id])
+  assignedToId    String
+  donation        Donation?    @relation(fields: [donationId], references: [id])
+  donationId      String?
+  status          PickupStatus @default(IDLE)
+  pickupCoords    Float[]
+  donatorCoords   Float[]
+  donatorLocation String?
+  startedAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
 }
 
 model Session {

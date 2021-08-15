@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@prisma/client": "^2.28.0",
+    "axios": "^0.21.1",
     "connect-pg-simple": "^6.2.1",
     "cors": "^2.8.5",
     "dotenv-flow": "^3.2.0",

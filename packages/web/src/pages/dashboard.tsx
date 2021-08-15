@@ -9,9 +9,10 @@ import {
 } from '@chakra-ui/react';
 import { useUser } from '../hooks/auth';
 import { UserRole } from '@prisma/client';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import api from '../lib/api';
+import Link from 'next/link';
 
 export default function Dashboard() {
   const { isLoading, isError, data: user, isAuthenticated } = useUser();
@@ -28,15 +29,23 @@ export default function Dashboard() {
     <Box>
       {user.role === UserRole.DONATOR ? (
         <Box>
-          <Button as="a" href="/donation">
-            Donate
-          </Button>
+          <Link href="/donation" passHref>
+            <Button as="a">Donate</Button>
+          </Link>
         </Box>
       ) : user.role === UserRole.PICKUP ? (
-        <Box></Box>
-      ) : (
-        <Box></Box>
-      )}
+        <Box>
+          <Link href="/donation" passHref>
+            <Button as="a">Pickup</Button>
+          </Link>
+        </Box>
+      ) : user.role === UserRole.NGO ? (
+        <Box>
+          <Link href="/ngo/register" passHref>
+            <Button as="a">Register NGO</Button>
+          </Link>
+        </Box>
+      ) : null}
       <pre>{JSON.stringify(user, null, 2)}</pre>
     </Box>
   );
@@ -71,6 +80,7 @@ function ChooseRole() {
           <Radio value={UserRole.DONATOR}>Donator</Radio>
           <Radio value={UserRole.PICKUP}>Pickup</Radio>
           <Radio value={UserRole.RESTAURANT}>Restaurant</Radio>
+          <Radio value={UserRole.NGO}>NGO</Radio>
         </Stack>
       </RadioGroup>
       <Button onClick={() => updateUser.mutate({ role: role! })}>Submit</Button>

@@ -14,7 +14,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import type { Ngo } from '@prisma/client';
-import { v4 as uuid } from 'uuid';
 import {
   Form,
   Formik,
@@ -23,18 +22,15 @@ import {
   useFormikContext,
 } from 'formik';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import Field from '../../components/field';
-import useLocation from '../../hooks/use-location';
 import api from '../../lib/api';
-import { useSocket } from '../../contexts/socket-provider';
 
 const initialValues = {
   ngoId: '',
   description: '',
   quantity: 1,
-  location: '',
 };
 
 type Values = typeof initialValues;
@@ -42,23 +38,21 @@ type Values = typeof initialValues;
 export default function Donation() {
   const queryClient = useQueryClient();
   const toast = useToast();
-  const location = useLocation();
-  const socketRef = useSocket();
   const donation = useMutation(
     async ({
       ngoId,
       description,
       quantity,
-      location,
-      donationId,
-    }: Values & { donationId: string }) =>
+    }: {
+      ngoId: string;
+      description: string;
+      quantity: number;
+    }) =>
       api.post('/donation', {
         ngoId: ngoId !== 'nearest' ? ngoId : null,
         nearest: ngoId === 'nearest',
         description,
         quantity,
-        location,
-        donationId,
       }),
     {
       onSuccess(result) {
@@ -86,31 +80,17 @@ export default function Donation() {
     }
   );
 
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
-
   const handleSubmit = async (
     values: Values,
     { setSubmitting }: FormikHelpers<Values>
   ) => {
     setSubmitting(true);
-    const donationId = uuid();
-    await donation.mutateAsync({
+
+    donation.mutate({
       description: values.description,
       ngoId: values.ngoId,
       quantity: values.quantity,
-      location: values.location,
-      donationId,
     });
-
-    try {
-      socketRef.current?.emit('pickup-request', {
-        donationId,
-      });
-    } catch (error) {
-      console.log(error);
-    }
 
     setSubmitting(false);
   };
@@ -153,7 +133,6 @@ function DonationForm() {
     useField('description');
   const [quantityInput, quantityMeta, quantityHelpers] = useField('quantity');
   const [ngoIdInput, ngoIdMeta] = useField('ngoId');
-  const [locationInput, locationMeta] = useField('location');
 
   return (
     <Form>
@@ -164,9 +143,6 @@ function DonationForm() {
             <option key={ngo.id}>{ngo.name}</option>
           ))}
         </Select>
-      </Field>
-      <Field meta={locationMeta} label="Location to pickup from">
-        <Input {...locationInput} />
       </Field>
       <Field meta={descriptionMeta} label="Description of your donation">
         <Textarea

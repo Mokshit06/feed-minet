@@ -24,6 +24,21 @@ router.put('/me', ensureAuthenticated, async (req, res) => {
   });
 });
 
+router.post('/location', ensureAuthenticated, async (req, res) => {
+  if (!req.user) return;
+
+  await prisma.user.update({
+    where: { id: req.user.id },
+    data: {
+      currentCoords: req.body.coords,
+    },
+  });
+
+  res.json({
+    message: 'Location updated',
+  });
+});
+
 router.get('/success', (req, res) => {
   res.send(/* html */ `
   <!DOCTYPE html>

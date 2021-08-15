@@ -61,12 +61,20 @@ model User {
 //   @@map("video_calls")
 // }
 
+enum CourseStatus {
+  PUBLISHED
+  IDLE
+}
+
 model Course {
-  id        String  @id @default(uuid())
+  id        String       @id @default(uuid())
+  name      String
+  subject   String
+  status    CourseStatus @default(IDLE)
   videos    Video[]
-  teacher   User    @relation("CoursesMade", fields: [teacherId], references: [id])
-  teacherId String  @map("teacher_id")
-  watchedBy User[]  @relation("CoursesWatched")
+  teacher   User         @relation("CoursesMade", fields: [teacherId], references: [id])
+  teacherId String       @map("teacher_id")
+  watchedBy User[]       @relation("CoursesWatched")
 
   @@map("courses")
 }

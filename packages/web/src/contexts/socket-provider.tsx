@@ -27,6 +27,7 @@ export const SocketProvider: React.FC = ({ children }) => {
         secure: true,
       });
 
+      // @ts-ignore
       window.socket = newSocket;
       socket.current = newSocket;
 
@@ -36,6 +37,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     }
 
     socket.current = null;
+    // @ts-ignore
     window.socket = null;
   }, [user]);
 

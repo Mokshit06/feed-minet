@@ -101,19 +101,11 @@ io.on('connection', async socket => {
 
   socket.on(
     'message:send',
-    async ({
-      text,
-      roomId,
-      senderId,
-    }: {
-      text: string;
-      roomId: string;
-      senderId: string;
-    }) => {
+    async ({ text, roomId }: { text: string; roomId: string }) => {
       const message = await prisma.message.create({
         data: {
           text,
-          senderId,
+          senderId: userId,
           roomId,
         },
         include: {

@@ -1,22 +1,38 @@
 import { Flex } from '@chakra-ui/react';
+import type { ChatRoom } from '@prisma/client';
+import { useAtom } from 'jotai';
 import Head from 'next/head';
 import { useEffect } from 'react';
-import { io } from 'socket.io-client';
+import { useSocket } from '../contexts/socket-provider';
 import { useUser } from '../hooks/auth';
-import { useSocket } from '../hooks/socket';
+import { roomsAtom, selectedRoomAtom, selectedRoomIdAtom } from '../hooks/chat';
 
 export default function Chat() {
-  const socket = useSocket();
+  const socketRef = useSocket();
   const user = useUser();
+  const [selectedRoomId, setSelectedRoomId] = useAtom(selectedRoomIdAtom);
+  const [selectedRoom, setSelectedRoom] = useAtom(selectedRoomAtom);
+  const [rooms, setRooms] = useAtom(roomsAtom);
 
   useEffect(() => {
-    // try connecting each time user changes
-    const close = socket.connect();
+    if (!socketRef.current) return;
+
+    socketRef.current.emit('rooms:fetch');
+  }, [socketRef]);
+
+  useEffect(() => {
+    if (!socketRef.current) return;
+
+    const socket = socketRef.current;
+
+    socket.on('rooms:render', ({ rooms }: { rooms: ChatRoom[] }) => {
+      setRooms(rooms);
+    });
 
     return () => {
-      if (close) close();
+      socket.off('rooms:render');
     };
-  }, [socket, user]);
+  }, [socketRef, setRooms]);
 
   return (
     <>
@@ -24,7 +40,9 @@ export default function Chat() {
         <title>Doubts | MINET</title>
       </Head>
       <Flex flex={1} width="full" overflow="hidden">
-        Doubts Page
+        <div>
+          <pre>{JSON.stringify(rooms, null, 2)}</pre>
+        </div>
       </Flex>
     </>
   );

@@ -3,19 +3,26 @@ import { useQuery, useQueryClient } from 'react-query';
 import { useToast } from '@chakra-ui/react';
 import api from '../lib/api';
 import type { User } from '@prisma/client';
+import { useMemo } from 'react';
 
 export function useUser() {
-  const user = useQuery<User>('/auth/me', {
+  const data = useQuery<User>('/auth/me', {
     retry: false,
     refetchOnWindowFocus: false,
     // 10 mins
     staleTime: 1000 * 60 * 10,
   });
 
-  return {
-    ...user,
-    isAuthenticated: user.status === 'success' && !!user.data,
-  };
+  const user = useMemo(() => {
+    console.log('CREATING NEW USER');
+
+    return {
+      ...data,
+      isAuthenticated: data.status === 'success' && !!data.data,
+    };
+  }, [data]);
+
+  return user;
 }
 
 export function useLogin() {

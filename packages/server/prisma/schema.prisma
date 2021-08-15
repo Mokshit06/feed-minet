@@ -32,7 +32,7 @@ model User {
   image          String?
   admin          Boolean    @default(false)
   provider       Provider
-  role           UserRole
+  role           UserRole?
   coursesMade    Course[]   @relation("CoursesMade")
   coursesWatched Course[]   @relation("CoursesWatched")
   comments       Comment[]
@@ -93,9 +93,10 @@ model Comment {
 }
 
 model ChatRoom {
-  id          String    @id @default(uuid())
-  particpants User[]
-  messages    Message[]
+  id           String    @id @default(uuid())
+  name         String?
+  participants User[]
+  messages     Message[]
 
   @@map("chat_rooms")
 }

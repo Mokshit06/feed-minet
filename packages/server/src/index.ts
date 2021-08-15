@@ -21,11 +21,24 @@ io.on('connection', async socket => {
   const userId = socket.handshake.query.id as string;
 
   socket.on('rooms:fetch', async () => {
-    const rooms = await prisma.user
-      .findUnique({
-        where: { id: userId },
-      })
-      .chatRooms();
+    console.log(
+      await prisma.user
+        .findUnique({
+          where: { id: userId },
+        })
+        .chatRooms()
+    );
+    const rooms = await prisma.chatRoom.findMany({
+      where: {
+        participants: {
+          some: { id: userId },
+        },
+      },
+      include: {
+        messages: true,
+        participants: true,
+      },
+    });
 
     socket.emit('rooms:render', { rooms });
   });
@@ -35,12 +48,12 @@ io.on('connection', async socket => {
     async ({ participantIds }: { participantIds: string[] }) => {
       await prisma.chatRoom.create({
         data: {
-          particpants: {
+          participants: {
             connect: participantIds.map(id => ({ id })),
           },
         },
         include: {
-          particpants: true,
+          participants: true,
         },
       });
 
@@ -58,7 +71,7 @@ io.on('connection', async socket => {
     const room = await prisma.chatRoom.findUnique({
       where: { id: roomId },
       include: {
-        particpants: true,
+        participants: true,
         messages: true,
       },
     });
@@ -74,6 +87,17 @@ io.on('connection', async socket => {
   socket.on('room:disconnected', ({ roomId }: { roomId: string }) => {
     socket.leave(roomId);
   });
+
+  // socket.on('messages:fetch', async ({ roomId }: { roomId: string }) => {
+  //   const messages = await prisma.message.findMany({
+  //     where: { roomId },
+  //     include: {
+  //       sender: true,
+  //     },
+  //   });
+
+  //   socket.emit('messages:render', { messages });
+  // });
 
   socket.on(
     'message:send',

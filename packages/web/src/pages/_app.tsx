@@ -3,8 +3,10 @@ import type { AppProps } from 'next/app';
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import type { QueryFunction, QueryKey } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import Layout from '../components/layout';
 import api from '../lib/api';
+import { SocketProvider } from '../contexts/socket-provider';
 
 const defaultQueryFn: QueryFunction<unknown, QueryKey> = async ({
   queryKey,
@@ -31,10 +33,13 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={false} />
       <ChakraProvider>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
+        <SocketProvider>
+          <Layout>
+            <Component {...pageProps} />
+          </Layout>
+        </SocketProvider>
       </ChakraProvider>
     </QueryClientProvider>
   );

@@ -24,6 +24,63 @@ async function geocodeLocation(location: string): Promise<Coords> {
   return data.features[0].center as Coords;
 }
 
+router.get('/', ensureAuthenticated, async (req, res) => {
+  if (!req.user) return;
+
+  if (req.user.role === UserRole.DONATOR) {
+    return res.json(
+      await prisma.donation.findMany({
+        where: { donatorId: req.user.id },
+        include: {
+          donator: true,
+          ngo: true,
+          pickup: true,
+        },
+      })
+    );
+  }
+
+  if (req.user.role === UserRole.NGO) {
+    return res.json(
+      await prisma.donation.findMany({
+        where: { ngo: { ownerId: req.user.id } },
+        include: {
+          donator: true,
+          ngo: true,
+          pickup: true,
+        },
+      })
+    );
+  }
+
+  res.json(
+    await prisma.donation.findMany({
+      include: {
+        donator: true,
+        ngo: true,
+        pickup: true,
+      },
+    })
+  );
+  // const donations = await prisma.
+});
+
+router.get('/:id', ensureAuthenticated, async (req, res) => {
+  const donationId = req.params.id as string;
+  if (!req.user) return;
+
+  return res.json(
+    await prisma.donation.findUnique({
+      where: { id: donationId },
+      include: {
+        donator: true,
+        ngo: true,
+        pickup: true,
+      },
+    })
+  );
+});
+
 router.post('/', ensureAuthenticated, async (req, res) => {
   if (!req.user) return;
 

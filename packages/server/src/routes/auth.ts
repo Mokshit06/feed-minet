@@ -30,7 +30,7 @@ router.post('/location', ensureAuthenticated, async (req, res) => {
   await prisma.user.update({
     where: { id: req.user.id },
     data: {
-      currentCoords: req.body.coords,
+      currentCoords: req.body,
     },
   });
 

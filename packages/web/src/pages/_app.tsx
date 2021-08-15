@@ -1,7 +1,7 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import type { AppProps } from 'next/app';
-import { useEffect } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { QueryFunction, QueryKey } from 'react-query';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';

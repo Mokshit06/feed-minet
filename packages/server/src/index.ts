@@ -1,9 +1,8 @@
+import { User as PrismaUser } from '@prisma/client';
 import { createServer } from 'http';
-import { ExpressPeerServer } from 'peer';
 import { Server } from 'socket.io';
 import app from './app';
 import prisma from './lib/prisma';
-import { User as PrismaUser } from '@prisma/client';
 
 const server = createServer(app);
 const io = new Server(server, {

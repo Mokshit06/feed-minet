@@ -3,7 +3,7 @@ import Head from 'next/head';
 import NextImage from 'next/image';
 import { useRouter } from 'next/router';
 import { FaRocket } from 'react-icons/fa';
-// import coverImage from '../../public/assets/cover-card-dark.png';
+import coverImage from '../../public/cover.jpg';
 import { useUser } from '../hooks/auth';
 
 export default function Home() {
@@ -61,7 +61,7 @@ export default function Home() {
           </Button>
         </Flex>
         <Box height="full" width="full">
-          {/* <NextImage alt="" src={coverImage} objectFit="contain" /> */}
+          <NextImage alt="" src={coverImage} objectFit="contain" />
         </Box>
       </SimpleGrid>
     </Flex>

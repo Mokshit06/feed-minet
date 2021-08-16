@@ -145,7 +145,16 @@ export default function SingleDonation() {
     const pickupCoords = donation.pickup.pickupCoords as Coords;
     const donatorCoords = donation.pickup.donatorCoords as Coords;
 
-    console.log({ pickupCoords, donatorCoords });
+    if (
+      pickupCoords.length < 2 ||
+      pickupCoords.every(x => typeof x !== 'number')
+    )
+      return;
+    if (
+      donatorCoords.length < 2 ||
+      donatorCoords.every(x => typeof x !== 'number')
+    )
+      return;
 
     map.fitBounds(
       [
@@ -161,7 +170,7 @@ export default function SingleDonation() {
       const directions = route.legs[0].steps.map(step => {
         return step.maneuver.instruction;
       });
-      setDirections(directions);
+      setDirections(directions as any);
 
       const geojson: Feature<Geometry, GeoJsonProperties> = {
         type: 'Feature',

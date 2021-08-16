@@ -100,7 +100,7 @@ export default function Dashboard() {
                   </Heading>
                 </Button>
               </Link>
-              <Link href="/donation/contributre" passHref>
+              <Link href="/donation/contribute" passHref>
                 <Button
                   as="a"
                   size="lg"

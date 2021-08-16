@@ -63,7 +63,7 @@ export default function Pickups() {
             {pickups?.map((pickup, index) => (
               <Tr
                 key={pickup.id}
-                onClick={() => router.push('')}
+                onClick={() => router.push(`/donation/${pickup.id}`)}
                 _hover={{ bg: 'gray.50', cursor: 'pointer' }}
               >
                 <Td>{index + 1}</Td>

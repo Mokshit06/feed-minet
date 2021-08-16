@@ -26,7 +26,7 @@ type DonationData = Donation & {
 
 export default function Donations() {
   const router = useRouter();
-  const { data: donations } = useQuery<DonationData[]>('/donations');
+  const { data: donations } = useQuery<DonationData[]>('/donation');
   const queryClient = useQueryClient();
   const socketRef = useSocket();
 

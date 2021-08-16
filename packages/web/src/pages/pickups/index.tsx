@@ -1,4 +1,3 @@
-import Link from '../../components/link';
 import {
   Box,
   Flex,
@@ -10,7 +9,6 @@ import {
   Th,
   Thead,
   Tr,
-  Button,
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -25,9 +23,8 @@ type PickupData = Donation & {
   pickup: Pickup;
 };
 
-export default function StoreProducts() {
+export default function Pickups() {
   const router = useRouter();
-  const storeId = router.query.storeId as string;
   const { data: pickups } = useQuery<PickupData[]>('/pickup');
   const queryClient = useQueryClient();
   const socketRef = useSocket();
@@ -38,8 +35,13 @@ export default function StoreProducts() {
 
     socket.on('pickup-alert', () => {
       console.log('ALERT');
+      queryClient.invalidateQueries('/pickup');
     });
-  }, [socketRef]);
+
+    return () => {
+      socket.off('pickup-alert');
+    };
+  }, [socketRef, queryClient]);
 
   return (
     <Flex flex={1} width="full" alignItems="flex-start" justifyContent="center">

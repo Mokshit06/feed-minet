@@ -8,7 +8,9 @@ function Login() {
 
   return (
     <Flex flex={1} width="full" alignItems="center" justifyContent="center">
-      <Head>Login</Head>
+      <Head>
+        <title>Login</title>
+      </Head>
       <Box
         borderWidth={1}
         p={8}

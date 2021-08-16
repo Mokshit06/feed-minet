@@ -43,11 +43,11 @@ export default function Home() {
           flexDir="column"
           justifyContent="center"
         >
-          <Heading fontSize="3rem">X</Heading>
+          <Heading fontSize="3rem">Feed</Heading>
           <Text fontSize="1.6rem" mt={6}>
-            X can reduce extreme hunger and malnutrition by getting surplus and
-            leftover food from restaurants and homes and give it to the people
-            in need
+            Feed reduces extreme hunger and malnutrition by getting surplus and
+            specially prepared food from restaurants and homes and help it reach
+            the people in need
           </Text>
           <Button
             rightIcon={<FaRocket size="0.9rem" />}

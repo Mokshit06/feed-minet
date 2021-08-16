@@ -74,7 +74,11 @@ router.get('/:id', ensureAuthenticated, async (req, res) => {
       where: { id: donationId },
       include: {
         donator: true,
-        ngo: true,
+        ngo: {
+          include: {
+            owner: true,
+          },
+        },
         pickup: true,
       },
     })

@@ -30,6 +30,7 @@ router.post('/ngo/register', ensureAuthenticated, async (req, res) => {
       name: data.name,
       address: data.address,
       numberOfPeople: data.numberOfPeople,
+      ownerId: req.user.id,
     },
   });
 

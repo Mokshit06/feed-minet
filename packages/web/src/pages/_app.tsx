@@ -35,9 +35,11 @@ function MyApp({ Component, pageProps }: AppProps) {
   const location = useLocation();
 
   useEffect(() => {
-    api
-      .post('/auth/location', [location?.longitude, location?.latitude])
-      .catch(() => {});
+    if (location) {
+      api
+        .post('/auth/location', [location.longitude, location.latitude])
+        .catch(() => {});
+    }
   }, [location]);
 
   return (

@@ -6,6 +6,11 @@ import {
   Radio,
   Button,
   useToast,
+  Image,
+  Flex,
+  Tag,
+  Text,
+  SimpleGrid,
 } from '@chakra-ui/react';
 import { useUser } from '../hooks/auth';
 import { UserRole } from '@prisma/client';
@@ -26,28 +31,156 @@ export default function Dashboard() {
   }
 
   return (
-    <Box>
-      {user.role === UserRole.DONATOR ? (
-        <Box>
-          <Link href="/donation" passHref>
-            <Button as="a">Donate</Button>
-          </Link>
-        </Box>
-      ) : user.role === UserRole.PICKUP ? (
-        <Box>
-          <Link href="/donation" passHref>
-            <Button as="a">Pickup</Button>
-          </Link>
-        </Box>
-      ) : user.role === UserRole.NGO ? (
-        <Box>
-          <Link href="/ngo/register" passHref>
-            <Button as="a">Register NGO</Button>
-          </Link>
-        </Box>
-      ) : null}
-      <pre>{JSON.stringify(user, null, 2)}</pre>
-    </Box>
+    <Flex flex={1} width="full" alignItems="flex-start" justifyContent="center">
+      <Box my={8} mx={4} maxW="700px" w="full">
+        <Flex mb={8} gridGap="2rem" alignItems="center">
+          <Image
+            src={user.image!}
+            rounded="md"
+            boxShadow="lg"
+            h="8rem"
+            w="8rem"
+            alt={user.name}
+          />
+          <Box>
+            <Heading mb={3} fontSize="4xl" fontWeight="500">
+              {user.name}
+            </Heading>
+            <Tag size="lg">
+              <Text>{user.role}</Text>
+            </Tag>
+          </Box>
+        </Flex>
+        <SimpleGrid columns={2} spacing={10}>
+          <Box boxShadow="md" px={6} py={4}>
+            <Heading fontWeight="500" as="h3" fontSize="2xl">
+              Total Donations
+            </Heading>
+            <Text fontSize="lg">{user.donations.length}</Text>
+          </Box>
+          <Box boxShadow="md" px={6} py={4}>
+            <Heading fontWeight="500" as="h3" fontSize="2xl">
+              Credits
+            </Heading>
+            {/* calc actual credits based on amount of food */}
+            <Text fontSize="lg">
+              {user.donations
+                .map(d => d.quantity)
+                .reduce((creds, quantity) => creds + quantity, 0) * 100}
+            </Text>
+          </Box>
+          <Box boxShadow="md" px={6} py={4}>
+            <Heading fontWeight="500" as="h3" fontSize="2xl">
+              Address
+            </Heading>
+            <Text fontSize="lg">{user.address || 'Delhi'}</Text>
+          </Box>
+          <Box boxShadow="md" px={6} py={4}>
+            <Heading fontWeight="500" as="h3" fontSize="2xl">
+              Authenticated
+            </Heading>
+            <Text fontSize="lg">
+              {user.provider[0].toUpperCase() +
+                user.provider.slice(1).toLowerCase()}
+            </Text>
+          </Box>
+          {user.role === UserRole.DONATOR ? (
+            <>
+              <Link passHref href="/donation">
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Donations
+                  </Heading>
+                </Button>
+              </Link>
+              <Link href="/donation/contributre" passHref>
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Contribute
+                  </Heading>
+                </Button>
+              </Link>
+            </>
+          ) : user.role === UserRole.PICKUP ? (
+            <>
+              <Link passHref href="/pickups">
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Pickups
+                  </Heading>
+                </Button>
+              </Link>
+              <Link href="/donation/contribute" passHref>
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Contribute
+                  </Heading>
+                </Button>
+              </Link>
+            </>
+          ) : user.role === UserRole.NGO ? (
+            <>
+              <Link passHref href="/ngo/register">
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Register
+                  </Heading>
+                </Button>
+              </Link>
+              <Link href="/ngo" passHref>
+                <Button
+                  as="a"
+                  size="lg"
+                  h="5rem"
+                  bgColor="gray.100"
+                  px={8}
+                  py={4}
+                >
+                  <Heading fontWeight="500" as="h3" fontSize="2xl">
+                    Donations received
+                  </Heading>
+                </Button>
+              </Link>
+            </>
+          ) : null}
+        </SimpleGrid>
+      </Box>
+    </Flex>
   );
 }
 

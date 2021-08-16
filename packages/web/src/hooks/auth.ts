@@ -2,11 +2,17 @@ import { useRouter } from 'next/router';
 import { useQuery, useQueryClient } from 'react-query';
 import { useToast } from '@chakra-ui/react';
 import api from '../lib/api';
-import type { User } from '@prisma/client';
+import type { User, Restaurant, Donation, Pickup } from '@prisma/client';
 import { useMemo } from 'react';
 
 export function useUser() {
-  const data = useQuery<User>('/auth/me', {
+  const data = useQuery<
+    User & {
+      restaurant: Restaurant;
+      donations: Donation[];
+      pickups: Pickup[];
+    }
+  >('/auth/me', {
     retry: false,
     refetchOnWindowFocus: false,
     // 10 mins

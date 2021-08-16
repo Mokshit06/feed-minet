@@ -51,7 +51,7 @@ export default function Home() {
           </Text>
           <Button
             rightIcon={<FaRocket size="0.9rem" />}
-            href="/dashboard"
+            // href="/dashboard"
             size="lg"
             width="fit-content"
             mt={6}
